@@ -15,10 +15,10 @@ export default function Footer() {
         <div>
           <h4 style={{ fontWeight: "600", marginBottom: "1.25rem", fontSize: "0.875rem" }}>Shop</h4>
           <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.75rem", color: "var(--muted-foreground)", fontSize: "0.875rem" }}>
-            <li><Link href="#" className="hover-opacity">New Arrivals</Link></li>
-            <li><Link href="#" className="hover-opacity">Best Sellers</Link></li>
-            <li><Link href="#" className="hover-opacity">Sale</Link></li>
-            <li><Link href="#" className="hover-opacity">Accessories</Link></li>
+            <li><Link href="/collections/new-arrivals" className="hover-opacity">New Arrivals</Link></li>
+            <li><Link href="/collections/best-sellers" className="hover-opacity">Best Sellers</Link></li>
+            <li><Link href="/collections/sale" className="hover-opacity">Sale</Link></li>
+            <li><Link href="/shop" className="hover-opacity">Accessories</Link></li>
           </ul>
         </div>
         

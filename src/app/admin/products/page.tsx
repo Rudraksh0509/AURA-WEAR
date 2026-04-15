@@ -11,7 +11,7 @@ export default function AdminProducts() {
   const [sizes, setSizes] = useState({ XS: "", S: "", M: "", L: "", XL: "", XXL: "" });
 
   const [formData, setFormData] = useState({
-    name: "", description: "", price: "", stock: "", categoryId: "", images: "", video: ""
+    name: "", description: "", price: "", stock: "", categoryId: "", images: "", video: "", isFeatured: false, isNewArrival: false, isBestSeller: false, isOnSale: false
   });
 
   const fetchData = async () => {
@@ -56,7 +56,7 @@ export default function AdminProducts() {
       body: JSON.stringify({ ...formData, stock: totalStock, sizes: finalSizes, images: [formData.images] }),
     });
     
-    setFormData({ name: "", description: "", price: "", stock: "", categoryId: "", images: "", video: "" });
+    setFormData({ name: "", description: "", price: "", stock: "", categoryId: "", images: "", video: "", isFeatured: false, isNewArrival: false, isBestSeller: false, isOnSale: false });
     setHasSizes(false);
     setSizes({ XS: "", S: "", M: "", L: "", XL: "", XXL: "" });
     setEditingId(null);
@@ -72,7 +72,11 @@ export default function AdminProducts() {
       stock: product.stock.toString(),
       categoryId: product.categoryId,
       images: product.images[0] || "",
-      video: product.video || ""
+      video: product.video || "",
+      isFeatured: product.isFeatured || false,
+      isNewArrival: product.isNewArrival || false,
+      isBestSeller: product.isBestSeller || false,
+      isOnSale: product.isOnSale || false
     });
     
     if (product.sizes && Object.keys(product.sizes).length > 0) {
@@ -216,6 +220,24 @@ export default function AdminProducts() {
             )}
           </div>
 
+          <div style={{ gridColumn: "span 2", padding: "1.5rem", backgroundColor: "var(--background)", borderRadius: "8px", border: "1px solid var(--border)" }}>
+             <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "1rem", fontWeight: "600" }}>Product Positioning & Labels</label>
+             <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
+               <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.875rem" }}>
+                 <input type="checkbox" checked={formData.isFeatured} onChange={e => setFormData({...formData, isFeatured: e.target.checked})} style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }} /> Feature on Homepage
+               </label>
+               <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.875rem" }}>
+                 <input type="checkbox" checked={formData.isNewArrival} onChange={e => setFormData({...formData, isNewArrival: e.target.checked})} style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }} /> Mark New Arrival
+               </label>
+               <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.875rem" }}>
+                 <input type="checkbox" checked={formData.isBestSeller} onChange={e => setFormData({...formData, isBestSeller: e.target.checked})} style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }} /> Mark Best Seller
+               </label>
+               <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.875rem" }}>
+                 <input type="checkbox" checked={formData.isOnSale} onChange={e => setFormData({...formData, isOnSale: e.target.checked})} style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }} /> Mark On Sale
+               </label>
+             </div>
+          </div>
+
           <div>
             <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "0.5rem", fontWeight: "500" }}>Direct Photo Upload or Paste URL</label>
             <input type="file" accept="image/*" onChange={handleImageUpload} style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)", fontSize: "0.875rem" }} />
@@ -230,7 +252,7 @@ export default function AdminProducts() {
               {loading ? "Processing..." : editingId ? "Save Changes" : "Publish Product"}
             </button>
             {editingId && (
-              <button type="button" onClick={() => { setEditingId(null); setFormData({ name: "", description: "", price: "", stock: "", categoryId: "", images: "", video: "" }); setHasSizes(false); setSizes({ XS: "", S: "", M: "", L: "", XL: "", XXL: "" }); }} style={{ padding: "1rem", flex: 0.3, backgroundColor: "var(--background)", color: "var(--foreground)", fontWeight: "600", borderRadius: "8px", border: "1px solid var(--border)", cursor: "pointer", transition: "opacity 0.2s" }} className="hover-opacity">
+              <button type="button" onClick={() => { setEditingId(null); setFormData({ name: "", description: "", price: "", stock: "", categoryId: "", images: "", video: "", isFeatured: false, isNewArrival: false, isBestSeller: false, isOnSale: false }); setHasSizes(false); setSizes({ XS: "", S: "", M: "", L: "", XL: "", XXL: "" }); }} style={{ padding: "1rem", flex: 0.3, backgroundColor: "var(--background)", color: "var(--foreground)", fontWeight: "600", borderRadius: "8px", border: "1px solid var(--border)", cursor: "pointer", transition: "opacity 0.2s" }} className="hover-opacity">
                 Cancel Edit
               </button>
             )}
@@ -259,7 +281,17 @@ export default function AdminProducts() {
                     ) : ( 
                       <div style={{ width: "48px", height: "48px", borderRadius: "6px", backgroundColor: "var(--accent)" }} /> 
                     )}
-                    <span style={{ fontWeight: "600" }}>{p.name} {p.sizes && Object.keys(p.sizes).length > 0 && <span style={{ fontSize: "0.75rem", padding: "0.1rem 0.4rem", backgroundColor: "var(--foreground)", color: "var(--background)", borderRadius: "4px", marginLeft: "0.5rem" }}>APPAREL</span>}</span>
+                    <div>
+                      <span style={{ fontWeight: "600", display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                        {p.name} {p.sizes && Object.keys(p.sizes).length > 0 && <span style={{ fontSize: "0.75rem", padding: "0.1rem 0.4rem", backgroundColor: "var(--foreground)", color: "var(--background)", borderRadius: "4px" }}>APPAREL</span>}
+                      </span>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", marginTop: "0.5rem" }}>
+                        {p.isFeatured && <span style={{ fontSize: "0.6rem", padding: "0.1rem 0.4rem", backgroundColor: "var(--primary)", color: "var(--primary-foreground)", borderRadius: "4px", fontWeight: "bold" }}>HOMEPAGE</span>}
+                        {p.isNewArrival && <span style={{ fontSize: "0.6rem", padding: "0.1rem 0.4rem", backgroundColor: "#3b82f6", color: "white", borderRadius: "4px", fontWeight: "bold" }}>NEW</span>}
+                        {p.isBestSeller && <span style={{ fontSize: "0.6rem", padding: "0.1rem 0.4rem", backgroundColor: "#f59e0b", color: "white", borderRadius: "4px", fontWeight: "bold" }}>BEST</span>}
+                        {p.isOnSale && <span style={{ fontSize: "0.6rem", padding: "0.1rem 0.4rem", backgroundColor: "#ef4444", color: "white", borderRadius: "4px", fontWeight: "bold" }}>SALE</span>}
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td style={{ padding: "1.25rem", color: "var(--muted-foreground)", fontWeight: "500" }}>{p.category?.name}</td>

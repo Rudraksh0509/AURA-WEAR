@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session || (session.user as any).role !== "ADMIN") return new NextResponse("Unauthorized", { status: 401 });
 
-    const { name, description, price, stock, categoryId, images, video, sizes } = await req.json();
+    const { name, description, price, stock, categoryId, images, video, sizes, isFeatured, isNewArrival, isBestSeller, isOnSale } = await req.json();
 
     const product = await prisma.product.create({
       data: {
@@ -32,6 +32,10 @@ export async function POST(req: Request) {
         categoryId,
         images: Array.isArray(images) ? images : (images ? [images] : []),
         video: video || null,
+        isFeatured: isFeatured || false,
+        isNewArrival: isNewArrival || false,
+        isBestSeller: isBestSeller || false,
+        isOnSale: isOnSale || false,
       },
     });
     return NextResponse.json(product);

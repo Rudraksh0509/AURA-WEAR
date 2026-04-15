@@ -84,10 +84,14 @@ model Product {
   stock       Int
   sizes       Json?    // Optional Size Matrix e.g {"XS": 10, "S": 5, "M": 2}
   images      String[] // Array of image URLs
-  video       String?  // Added optional video URL
-  categoryId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  video        String?  // Added optional video URL
+  isFeatured   Boolean  @default(false)
+  isNewArrival Boolean  @default(false)
+  isBestSeller Boolean  @default(false)
+  isOnSale     Boolean  @default(false)
+  categoryId   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   category   Category    @relation(fields: [categoryId], references: [id])
   orderItems OrderItem[]
@@ -95,10 +99,11 @@ model Product {
 }
 
 model Category {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  image    String?   // Added for category photos
-  products Product[]
+  id         String    @id @default(cuid())
+  name       String    @unique
+  image      String?   // Added for category photos
+  isFeatured Boolean   @default(false) // Whether to show on homepage
+  products   Product[]
 }
 
 model Order {

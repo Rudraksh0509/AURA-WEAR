@@ -20,11 +20,11 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session || (session.user as any).role !== "ADMIN") return new NextResponse("Unauthorized", { status: 401 });
 
-    const { name, image } = await req.json();
+    const { name, image, isFeatured } = await req.json();
     if (!name) return new NextResponse("Missing name", { status: 400 });
 
     const category = await prisma.category.create({
-      data: { name, image: image || null }
+      data: { name, image: image || null, isFeatured: isFeatured || false }
     });
     return NextResponse.json(category);
   } catch (error) {
@@ -37,12 +37,12 @@ export async function PUT(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session || (session.user as any).role !== "ADMIN") return new NextResponse("Unauthorized", { status: 401 });
 
-    const { id, name, image } = await req.json();
+    const { id, name, image, isFeatured } = await req.json();
     if (!id || !name) return new NextResponse("Missing id or name", { status: 400 });
 
     const category = await prisma.category.update({
       where: { id },
-      data: { name, image: image || null }
+      data: { name, image: image || null, isFeatured: isFeatured || false }
     });
     return NextResponse.json(category);
   } catch (error) {

@@ -7,7 +7,7 @@ export default function AdminCategories() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    name: "", image: ""
+    name: "", image: "", isFeatured: false
   });
 
   const fetchCategories = async () => {
@@ -36,14 +36,14 @@ export default function AdminCategories() {
       body: JSON.stringify(editingId ? { id: editingId, ...formData } : formData),
     });
     
-    setFormData({ name: "", image: "" });
+    setFormData({ name: "", image: "", isFeatured: false });
     setEditingId(null);
     setLoading(false);
     fetchCategories();
   };
 
   const handleEdit = (category: any) => {
-    setFormData({ name: category.name, image: category.image || "" });
+    setFormData({ name: category.name, image: category.image || "", isFeatured: category.isFeatured || false });
     setEditingId(category.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -76,12 +76,16 @@ export default function AdminCategories() {
             <input type="file" accept="image/*" onChange={handleImageUpload} style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)", fontSize: "0.875rem" }} />
             <input value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} placeholder="Or paste Image URL..." style={{ width: "100%", padding: "0.875rem", borderRadius: "8px", border: "1px solid var(--border)", outline: "none", backgroundColor: "var(--background)", color: "var(--foreground)" }} />
           </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <input type="checkbox" id="isFeatured" checked={formData.isFeatured} onChange={e => setFormData({...formData, isFeatured: e.target.checked})} style={{ width: "1.25rem", height: "1.25rem", cursor: "pointer" }} />
+            <label htmlFor="isFeatured" style={{ fontSize: "0.875rem", fontWeight: "500", cursor: "pointer" }}>Feature on Homepage</label>
+          </div>
           <div style={{ display: "flex", gap: "1rem" }}>
             <button disabled={loading} type="submit" style={{ padding: "1rem", flex: 1, backgroundColor: "var(--primary)", color: "var(--primary-foreground)", fontWeight: "600", borderRadius: "8px", border: "none", cursor: "pointer", transition: "opacity 0.2s" }} className="hover-opacity">
               {loading ? "Processing..." : editingId ? "Save Collection" : "Publish Collection"}
             </button>
             {editingId && (
-              <button type="button" onClick={() => { setEditingId(null); setFormData({ name: "", image: "" }) }} style={{ padding: "1rem", backgroundColor: "var(--background)", color: "var(--foreground)", fontWeight: "600", borderRadius: "8px", border: "1px solid var(--border)", cursor: "pointer" }}>
+              <button type="button" onClick={() => { setEditingId(null); setFormData({ name: "", image: "", isFeatured: false }) }} style={{ padding: "1rem", backgroundColor: "var(--background)", color: "var(--foreground)", fontWeight: "600", borderRadius: "8px", border: "1px solid var(--border)", cursor: "pointer" }}>
                 Cancel
               </button>
             )}
@@ -95,6 +99,7 @@ export default function AdminCategories() {
             <tr>
               <th style={{ padding: "1.25rem", fontWeight: "600", borderBottom: "1px solid var(--border)", fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--muted-foreground)" }}>Collection Asset</th>
               <th style={{ padding: "1.25rem", fontWeight: "600", borderBottom: "1px solid var(--border)", fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--muted-foreground)" }}>Name</th>
+              <th style={{ padding: "1.25rem", fontWeight: "600", borderBottom: "1px solid var(--border)", fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--muted-foreground)" }}>Featured</th>
               <th style={{ padding: "1.25rem", fontWeight: "600", borderBottom: "1px solid var(--border)", fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--muted-foreground)" }}>Products Configured</th>
               <th style={{ padding: "1.25rem", fontWeight: "600", borderBottom: "1px solid var(--border)", fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--muted-foreground)", textAlign: "right" }}>Actions</th>
             </tr>
@@ -110,6 +115,11 @@ export default function AdminCategories() {
                   ) : <div style={{ width: "64px", height: "48px", borderRadius: "6px", backgroundColor: "var(--accent)" }} />}
                 </td>
                 <td style={{ padding: "1rem", fontWeight: "600", fontSize: "1.1rem" }}>{c.name}</td>
+                <td style={{ padding: "1rem" }}>
+                  {c.isFeatured ? (
+                    <span style={{ padding: "0.25rem 0.75rem", backgroundColor: "var(--primary)", color: "var(--primary-foreground)", borderRadius: "999px", fontSize: "0.75rem", fontWeight: "bold" }}>Featured</span>
+                  ) : <span style={{ color: "var(--muted-foreground)" }}>-</span>}
+                </td>
                 <td style={{ padding: "1rem", color: "var(--muted-foreground)" }}>{c._count?.products || 0} Products</td>
                 <td style={{ padding: "1rem", textAlign: "right" }}>
                   <button onClick={() => handleEdit(c)} style={{ padding: "0.5rem 1rem", fontSize: "0.875rem", border: "1px solid var(--border)", backgroundColor: "transparent", color: "var(--foreground)", borderRadius: "6px", cursor: "pointer", marginRight: "0.5rem" }} className="hover-opacity">Edit</button>

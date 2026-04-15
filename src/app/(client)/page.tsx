@@ -3,8 +3,15 @@ import prisma from "@/lib/prisma";
 
 export default async function HomePage() {
   const categories = await prisma.category.findMany({
+    where: { isFeatured: true },
     take: 2,
     orderBy: { name: "asc" }
+  });
+
+  const featuredProducts = await prisma.product.findMany({
+    where: { isFeatured: true },
+    take: 4,
+    orderBy: { createdAt: "desc" }
   });
 
   return (
@@ -100,6 +107,36 @@ export default async function HomePage() {
 
         </div>
       </section>
+
+      {/* Featured Products */}
+      {featuredProducts.length > 0 && (
+        <section style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 2rem 8rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+            <h2 className="brand-font" style={{ fontSize: "2rem", marginBottom: "1rem" }}>Featured Pieces</h2>
+            <p style={{ color: "var(--muted-foreground)" }}>Hand-selected seasonal highlights.</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "2rem" }}>
+            {featuredProducts.map(product => (
+              <div key={product.id} className="hover-lift" style={{ border: "1px solid var(--border)", borderRadius: "8px", overflow: "hidden", backgroundColor: "var(--accent)" }}>
+                <Link href={`/product/${product.id}`} style={{ display: "block", height: "350px", overflow: "hidden", position: "relative" }}>
+                  {product.images[0] ? (
+                     // @ts-ignore
+                    <img src={product.images[0]} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }} className="hover-scale" />
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", backgroundColor: "var(--background)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--muted-foreground)" }}>No Image</div>
+                  )}
+                </Link>
+                <div style={{ padding: "1.5rem" }}>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "600", marginBottom: "0.5rem" }}>{product.name}</h3>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ color: "var(--muted-foreground)", fontWeight: "500" }}>${product.price.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Philosophy Banner */}
       <section style={{ backgroundColor: "var(--accent)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "8rem 2rem", textAlign: "center" }}>
